@@ -1,0 +1,69 @@
+function checkCashRegister(price, cash, cid) {
+  let onHand = [];
+  let change = [];
+  var currencyMap=[
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100]
+  ]
+  for (let i=0; i<cid.length; i++){
+    var unit=cid[i][0];
+    onHand.push([unit]);
+    onHand[i].push(Math.round(cid[i][1]/currencyMap[i][1]));
+  }
+  var totalOnHand = function(unit){
+    var total=onHand[unit][1]*currencyMap[unit][1];
+    return Number(total.toFixed(2));
+  }
+ /* for (let i=0; i<currencyMap.length; i++){
+    if (cash===currencyMap[i][1]){
+      onHand[i][1]+=1;
+      break;
+    }
+  }*/
+  var calcChange=cash-price;
+  for (let i=8; i>=0; i--){
+    var count=0;
+    if (calcChange>0 && calcChange>=currencyMap[i][1]){
+      while (calcChange>=0 && count<onHand[i][1] && calcChange-currencyMap[i][1]>-0.001){
+        calcChange-=currencyMap[i][1]
+        count++;
+      }
+    }
+    change.unshift([currencyMap[i][0],count]);
+  }console.log(change)
+  calcChange=Number(calcChange.toFixed(2));
+  console.log("calcChange: "+calcChange)
+  if (calcChange===0){
+    let leftOver=0;
+    for (let i=0; i<=8; i++){
+      onHand[i][1]-=change[i][1];
+      leftOver+=Number((onHand[i][1]*currencyMap[i][1]).toFixed(2));
+    }
+    console.log("leftOver: "+leftOver)
+      let changeAmount=[];
+      for (let i=0;i<=8;i++){
+        if (change[i][1]>0){
+        changeAmount.unshift([currencyMap[i][0],change[i][1]*currencyMap[i][1]]);}
+      }
+      if (leftOver===0){
+        let cashInDrawer=[];
+        for (let i=0;i<=8;i++){
+          cashInDrawer.push([currencyMap[i][0],change[i][1]        *currencyMap[i][1]]);
+        }
+        console.log(cashInDrawer)
+        return {status: "CLOSED", change: cashInDrawer}; 
+      }else{
+      return {status: "OPEN", change: changeAmount};
+    }
+  }
+  return {status: "INSUFFICIENT_FUNDS", change: []};
+}
+
+checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]);
