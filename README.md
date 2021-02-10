@@ -1,3 +1,3 @@
 # testrepo
 
-Edited file
+Edited file in git clone
